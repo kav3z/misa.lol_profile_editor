@@ -1,4 +1,19 @@
-/__pycache__
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database
 *.db
-.pytest_cache
+misa_profile.db
+
+# Environments
 .env
+.venv/
+venv/
+ENV/
+
+# Testing cache
+.pytest_cache/
+.coverage
+htmlcov/

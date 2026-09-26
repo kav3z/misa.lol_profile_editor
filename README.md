@@ -62,6 +62,13 @@ pytest -v
 ```
 *(All 27 automated tests verify starting state, valid updates, whitespace trimming, boundary limits, URL validation, type rejection, malformed JSON, and immutability on failure).*
 
+## ⏱️ Time Spent & Completion Status
+
+- **Approximate time spent:** ~55 minutes total (10 min setup & design, 30 min implementation, 15 min verification & testing).
+- **What works:** 100% of all required features (load & edit, live safe preview, valid/invalid link states, save with pending/disabled state, backend persistence, strict server validation, and custom HTTP 400 error handling).
+- **Anything unfinished:** None. Everything specified in the assessment is fully implemented and tested.
+- **Starter code:** None. Built from scratch with FastAPI, SQLModel, and Jinja2.
+
 ---
 
 ## 🎯 What Works & Implementation Summary
