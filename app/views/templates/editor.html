@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}misa.lol — Profile Editor{% endblock %}
+
+{% block content %}
+<div class="editor-layout">
+  
+  <!-- LEFT COLUMN: EDIT FORM -->
+  <section class="card editor-card" aria-labelledby="editor-heading">
+    <div class="card-header">
+      <h1 id="editor-heading" class="card-title">Edit Profile</h1>
+      <p class="card-subtitle">Update your public identity card and link.</p>
+    </div>
+
+    <!-- Overall Status Notifications -->
+    <div id="status-banner" class="status-banner hidden" role="alert" aria-live="polite"></div>
+
+    <form id="profile-form" novalidate autocomplete="off">
+      
+      <!-- 1. DISPLAY NAME -->
+      <div class="form-group" id="group-displayName">
+        <div class="label-row">
+          <label for="displayName" class="form-label">Display Name <span class="required" aria-hidden="true">*</span></label>
+          <span class="char-counter" id="displayName-count" aria-live="off">0 / 40</span>
+        </div>
+        <input
+          type="text"
+          id="displayName"
+          name="displayName"
+          class="form-control"
+          placeholder="e.g. Nova"
+          maxlength="80"
+          value="{{ profile.displayName }}"
+          required
+          aria-describedby="displayName-error displayName-help"
+        >
+        <span id="displayName-help" class="form-help">1–40 characters after trimming.</span>
+        <div id="displayName-error" class="field-error" aria-live="assertive"></div>
+      </div>
+
+      <!-- 2. BIO -->
+      <div class="form-group" id="group-bio">
+        <div class="label-row">
+          <label for="bio" class="form-label">Bio</label>
+          <span class="char-counter" id="bio-count" aria-live="off">0 / 160</span>
+        </div>
+        <textarea
+          id="bio"
+          name="bio"
+          class="form-control"
+          rows="3"
+          placeholder="Music, late nights, and things I make."
+          maxlength="250"
+          aria-describedby="bio-error bio-help"
+        >{{ profile.bio }}</textarea>
+        <span id="bio-help" class="form-help">0–160 characters after trimming. Empty bio allowed.</span>
+        <div id="bio-error" class="field-error" aria-live="assertive"></div>
+      </div>
+
+      <!-- 3. LINK LABEL -->
+      <div class="form-group" id="group-linkLabel">
+        <div class="label-row">
+          <label for="linkLabel" class="form-label">Link Label <span class="required" aria-hidden="true">*</span></label>
+          <span class="char-counter" id="linkLabel-count" aria-live="off">0 / 30</span>
+        </div>
+        <input
+          type="text"
+          id="linkLabel"
+          name="linkLabel"
+          class="form-control"
+          placeholder="e.g. My website"
+          maxlength="60"
+          value="{{ profile.link.label }}"
+          required
+          aria-describedby="linkLabel-error linkLabel-help"
+        >
+        <span id="linkLabel-help" class="form-help">1–30 characters after trimming.</span>
+        <div id="linkLabel-error" class="field-error" aria-live="assertive"></div>
+      </div>
+
+      <!-- 4. LINK URL -->
+      <div class="form-group" id="group-linkUrl">
+        <div class="label-row">
+          <label for="linkUrl" class="form-label">Link URL <span class="required" aria-hidden="true">*</span></label>
+        </div>
+        <input
+          type="url"
+          id="linkUrl"
+          name="linkUrl"
+          class="form-control"
+          placeholder="https://example.com"
+          value="{{ profile.link.url }}"
+          required
+          aria-describedby="linkUrl-error linkUrl-help"
+        >
+        <span id="linkUrl-help" class="form-help">Must be an absolute https:// URL with a valid hostname.</span>
+        <div id="linkUrl-error" class="field-error" aria-live="assertive"></div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="form-actions">
+        <button type="submit" id="save-btn" class="btn btn-primary">
+          <span class="btn-spinner hidden" id="save-spinner" aria-hidden="true"></span>
+          <span class="btn-text" id="save-btn-text">Save Profile</span>
+        </button>
+      </div>
+
+    </form>
+  </section>
+
+  <!-- RIGHT COLUMN: LIVE PREVIEW -->
+  <section class="card preview-card" aria-labelledby="preview-heading">
+    <div class="preview-badge-container">
+      <h2 id="preview-heading" class="card-title preview-title">Live Preview</h2>
+      <span class="live-pill" aria-label="Live preview indicator">
+        <span class="pulse-dot"></span> Live
+      </span>
+    </div>
+    <p class="card-subtitle">Real-time preview of how your card appears to visitors.</p>
+
+    <!-- THE PREVIEW CARD ITSELF -->
+    <div class="profile-preview-box">
+      <!-- Avatar with initials -->
+      <div class="preview-avatar" id="preview-avatar" aria-hidden="true">
+        N
+      </div>
+
+      <!-- Display Name -->
+      <div class="preview-name-container">
+        <h3 class="preview-name" id="preview-name">Nova</h3>
+      </div>
+
+      <!-- Bio -->
+      <p class="preview-bio" id="preview-bio">Music, late nights, and things I make.</p>
+
+      <!-- Link Preview Area -->
+      <div class="preview-link-wrapper" id="preview-link-wrapper">
+        <!-- Interactive link when valid -->
+        <a
+          href="https://example.com"
+          id="preview-link-anchor"
+          class="preview-link-btn"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="link-icon" aria-hidden="true">↗</span>
+          <span class="link-label-text" id="preview-link-label">My website</span>
+        </a>
+
+        <!-- Disabled/warning placeholder when URL is invalid -->
+        <div id="preview-link-disabled" class="preview-link-disabled hidden" role="status">
+          <span class="warning-icon" aria-hidden="true">⚠</span>
+          <div class="disabled-link-content">
+            <span class="disabled-label-text" id="preview-link-disabled-label">My website</span>
+            <span class="disabled-reason-text">Invalid URL (not clickable)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Guidance Footer -->
+    <div class="preview-note">
+      <small>
+        Text is safely sanitized as plain text. Invalid URLs are blocked from becoming clickable links.
+      </small>
+    </div>
+  </section>
+
+</div>
+
+<!-- Initial Profile JSON embedded from server-side render -->
+<script id="initial-profile-data" type="application/json">
+  {{ profile | tojson }}
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/editor.js"></script>
+{% endblock %}
